@@ -123,14 +123,6 @@ store.subscribe(() => {
 
 store.dispatch(
 	addTodoAction({
-		id: 0,
-		name: "Walk the dog",
-		complete: false,
-	})
-);
-
-store.dispatch(
-	addTodoAction({
 		id: 1,
 		name: "Wash the car",
 		complete: false,
@@ -156,11 +148,36 @@ store.dispatch(
 	})
 );
 
-store.dispatch(
-	addGoalAction({
-		id: 1,
-		name: "Lose 20 pounds",
-	})
-);
-
 store.dispatch(removeGoalAction(0));
+
+const generateId = () =>
+	Math.random().toString(36).substring(2) + new Date().getTime().toString(36);
+
+const addTodo = () => {
+	const input = document.getElementById("todo");
+	const name = input.value;
+	input.value = "";
+	store.dispatch(
+		addTodoAction({
+			id: generateId(),
+			complete: false,
+			name,
+		})
+	);
+};
+
+const addGoal = () => {
+	const input = document.getElementById("goal");
+	const name = input.value;
+	input.value = "";
+	store.dispatch(
+		addGoalAction({
+			id: generateId(),
+			name,
+		})
+	);
+};
+
+document.getElementById("todoBtn").addEventListener("click", addTodo);
+document.getElementById("goalBtn").addEventListener("click", addGoal);
+console.log(document);
