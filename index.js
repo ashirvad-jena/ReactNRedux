@@ -117,36 +117,9 @@ function app(state = {}, action) {
 
 const store = createStore(app);
 
-store.subscribe(() => {
-	console.log("The new state is: ", store.getState());
-});
-
-store.dispatch(
-	addTodoAction({
-		id: 1,
-		name: "Wash the car",
-		complete: false,
-	})
-);
-
-store.dispatch(
-	addTodoAction({
-		id: 2,
-		name: "Go to the gym",
-		complete: true,
-	})
-);
-
 store.dispatch(removeTodoAction(1));
 
 store.dispatch(toggleTodoAction(0));
-
-store.dispatch(
-	addGoalAction({
-		id: 0,
-		name: "Learn Redux",
-	})
-);
 
 store.dispatch(removeGoalAction(0));
 
@@ -178,6 +151,28 @@ const addGoal = () => {
 	);
 };
 
+const addTodoToDOM = (todo) => {
+	console.log(todo);
+	const node = document.createElement("li");
+	const textNode = document.createTextNode(todo.name);
+	node.appendChild(textNode);
+	document.getElementById("todos").appendChild(node);
+};
+
+const addGoalToDOM = (goal) => {
+	const node = document.createElement("li");
+	const textNode = document.createTextNode(goal.name);
+	node.appendChild(textNode);
+	document.getElementById("goals").appendChild(node);
+};
+
+store.subscribe(() => {
+	document.getElementById("goals").innerHTML = "";
+	document.getElementById("todos").innerHTML = "";
+	const { todos, goals } = store.getState();
+	todos.forEach((todo) => addTodoToDOM(todo));
+	goals.forEach((goal) => addGoalToDOM(goal));
+});
+
 document.getElementById("todoBtn").addEventListener("click", addTodo);
 document.getElementById("goalBtn").addEventListener("click", addGoal);
-console.log(document);
