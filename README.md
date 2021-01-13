@@ -1,4 +1,4 @@
-# ReactNRedux
+# Custom Redux
 
 ## About
 This is to showcase how the redux works. It contains a small library to show the working of redux framework.
