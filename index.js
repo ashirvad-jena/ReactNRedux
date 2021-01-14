@@ -1,3 +1,4 @@
+/* Added Redux library so commenting this out
 // Library Code
 function createStore(reducer) {
 	// The store should have four parts
@@ -29,6 +30,7 @@ function createStore(reducer) {
 		dispatch,
 	};
 }
+*/
 
 // App Code
 // action types
@@ -107,6 +109,7 @@ function goals(state = [], action) {
 			return state;
 	}
 }
+/*
 // root reducer
 function app(state = {}, action) {
 	return {
@@ -116,12 +119,14 @@ function app(state = {}, action) {
 }
 
 const store = createStore(app);
+*/
 
-store.dispatch(removeTodoAction(1));
-
-store.dispatch(toggleTodoAction(0));
-
-store.dispatch(removeGoalAction(0));
+const store = Redux.createStore(
+	Redux.comnineRedducers({
+		todos,
+		goals,
+	})
+);
 
 const generateId = () =>
 	Math.random().toString(36).substring(2) + new Date().getTime().toString(36);
@@ -191,7 +196,69 @@ store.subscribe(() => {
 	const { todos, goals } = store.getState();
 	todos.forEach((todo) => addTodoToDOM(todo));
 	goals.forEach((goal) => addGoalToDOM(goal));
+	console.log(store.getState());
 });
 
 document.getElementById("todoBtn").addEventListener("click", addTodo);
 document.getElementById("goalBtn").addEventListener("click", addGoal);
+
+const test = {
+	users: {},
+	setting: {},
+	tweets: {
+		btyxlj: {
+			text: "What is a jQuery?",
+			author: {
+				name: "Tyler McGinnis",
+				id: "tylermcginnis",
+				avatar: "twt.com/tm.png",
+			},
+		},
+	},
+};
+
+const cat = {
+	legs: 4,
+	sound: "meow",
+	inner: {
+		eye: 2,
+		tail: 1,
+	},
+};
+const dog = {
+	...cat,
+	inner: {
+		...cat.inner,
+		eye: 4,
+	},
+};
+
+const test2 = {
+	...test,
+	tweets: {
+		...test.tweets,
+		btyxlj: {
+			...test.tweets.btyxlj,
+			author: {
+				...test.tweets.btyxlj.author,
+				avatar: "newAvatar",
+			},
+		},
+	},
+};
+
+console.log(cat);
+console.log(dog);
+console.log(test);
+console.log(test2);
+
+const style = {
+	width: 300,
+	marginLeft: 10,
+	marginRight: 30,
+};
+
+const { width, ...margin } = style;
+
+console.log(width);
+console.log(margin);
