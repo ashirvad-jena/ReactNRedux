@@ -76,6 +76,22 @@ const removeGoalAction = (id) => {
 	};
 };
 
+const checkAndDispatch = (store, action) => {
+	if (
+		action.type === ADD_TODO &&
+		action.todo.name.toLowerCase().includes("bitcoin")
+	) {
+		return alert("Nope!!. Bad idea");
+	}
+	if (
+		action.type === ADD_GOAL &&
+		action.goal.name.toLowerCase().includes("bitcoin")
+	) {
+		return alert("Nope!!. Bad idea");
+	}
+	return store.dispatch(action);
+};
+
 // Reducers
 function todos(state = [], action) {
 	switch (action.type) {
@@ -122,7 +138,7 @@ const store = createStore(app);
 */
 
 const store = Redux.createStore(
-	Redux.comnineRedducers({
+	Redux.combineReducers({
 		todos,
 		goals,
 	})
@@ -142,7 +158,8 @@ const addTodo = () => {
 	const input = document.getElementById("todo");
 	const name = input.value;
 	input.value = "";
-	store.dispatch(
+	checkAndDispatch(
+		store,
 		addTodoAction({
 			id: generateId(),
 			complete: false,
@@ -155,7 +172,8 @@ const addGoal = () => {
 	const input = document.getElementById("goal");
 	const name = input.value;
 	input.value = "";
-	store.dispatch(
+	checkAndDispatch(
+		store,
 		addGoalAction({
 			id: generateId(),
 			name,
@@ -168,11 +186,11 @@ const addTodoToDOM = (todo) => {
 	const node = document.createElement("li");
 	const textNode = document.createTextNode(todo.name);
 	const removeBtn = createDeleteBtn(() => {
-		store.dispatch(removeTodoAction(todo.id));
+		checkAndDispatch(store, removeTodoAction(todo.id));
 	});
 	node.style.textDecoration = todo.complete ? "line-through" : "none";
 	node.addEventListener("click", () => {
-		store.dispatch(toggleTodoAction(todo.id));
+		checkAndDispatch(store, toggleTodoAction(todo.id));
 	});
 	node.appendChild(textNode);
 	node.appendChild(removeBtn);
@@ -183,7 +201,7 @@ const addGoalToDOM = (goal) => {
 	const node = document.createElement("li");
 	const textNode = document.createTextNode(goal.name);
 	const removeBtn = createDeleteBtn(() => {
-		store.dispatch(removeGoalAction(goal.id));
+		checkAndDispatch(store, removeGoalAction(goal.id));
 	});
 	node.appendChild(textNode);
 	node.appendChild(removeBtn);
