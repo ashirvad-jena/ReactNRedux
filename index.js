@@ -76,6 +76,7 @@ const removeGoalAction = (id) => {
 	};
 };
 
+/* // Commenting this dur to additon of Redux.applyMiddleware
 const checkAndDispatch = (store, action) => {
 	if (
 		action.type === ADD_TODO &&
@@ -91,6 +92,7 @@ const checkAndDispatch = (store, action) => {
 	}
 	return store.dispatch(action);
 };
+*/
 
 // Reducers
 function todos(state = [], action) {
@@ -151,8 +153,17 @@ const checker = (store) => (next) => (action) => {
 	) {
 		return alert("Nope. That's a bad idea.");
 	}
-
 	return next(action);
+};
+
+const logger = (store) => (next) => (action) => {
+	console.group(action.type);
+	console.log("the action: ", action);
+	console.log("the old state: ", store.getState());
+	const result = next(action);
+	console.log("the updated state: ", store.getState());
+	console.groupEnd();
+	return result;
 };
 
 const store = Redux.createStore(
@@ -160,7 +171,7 @@ const store = Redux.createStore(
 		todos,
 		goals,
 	}),
-	Redux.applyMiddleware(checker)
+	Redux.applyMiddleware(checker, logger)
 );
 
 const generateId = () =>
@@ -199,11 +210,10 @@ const addGoal = () => {
 };
 
 const addTodoToDOM = (todo) => {
-	console.log(todo);
 	const node = document.createElement("li");
 	const textNode = document.createTextNode(todo.name);
 	const removeBtn = createDeleteBtn(() => {
-		checkAndDispatch(store, removeTodoAction(todo.id));
+		store.dispatch(removeTodoAction(todo.id));
 	});
 	node.style.textDecoration = todo.complete ? "line-through" : "none";
 	node.addEventListener("click", () => {
@@ -231,69 +241,7 @@ store.subscribe(() => {
 	const { todos, goals } = store.getState();
 	todos.forEach((todo) => addTodoToDOM(todo));
 	goals.forEach((goal) => addGoalToDOM(goal));
-	console.log(store.getState());
 });
 
 document.getElementById("todoBtn").addEventListener("click", addTodo);
 document.getElementById("goalBtn").addEventListener("click", addGoal);
-
-const test = {
-	users: {},
-	setting: {},
-	tweets: {
-		btyxlj: {
-			text: "What is a jQuery?",
-			author: {
-				name: "Tyler McGinnis",
-				id: "tylermcginnis",
-				avatar: "twt.com/tm.png",
-			},
-		},
-	},
-};
-
-const cat = {
-	legs: 4,
-	sound: "meow",
-	inner: {
-		eye: 2,
-		tail: 1,
-	},
-};
-const dog = {
-	...cat,
-	inner: {
-		...cat.inner,
-		eye: 4,
-	},
-};
-
-const test2 = {
-	...test,
-	tweets: {
-		...test.tweets,
-		btyxlj: {
-			...test.tweets.btyxlj,
-			author: {
-				...test.tweets.btyxlj.author,
-				avatar: "newAvatar",
-			},
-		},
-	},
-};
-
-console.log(cat);
-console.log(dog);
-console.log(test);
-console.log(test2);
-
-const style = {
-	width: 300,
-	marginLeft: 10,
-	marginRight: 30,
-};
-
-const { width, ...margin } = style;
-
-console.log(width);
-console.log(margin);
