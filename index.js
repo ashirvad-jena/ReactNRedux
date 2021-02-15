@@ -78,24 +78,6 @@ const removeGoalAction = (id) => {
 	};
 };
 
-/* // Commenting this due to additon of Redux.applyMiddleware
-const checkAndDispatch = (store, action) => {
-	if (
-		action.type === ADD_TODO &&
-		action.todo.name.toLowerCase().includes("bitcoin")
-	) {
-		return alert("Nope!!. Bad idea");
-	}
-	if (
-		action.type === ADD_GOAL &&
-		action.goal.name.toLowerCase().includes("bitcoin")
-	) {
-		return alert("Nope!!. Bad idea");
-	}
-	return store.dispatch(action);
-};
-*/
-
 // Reducers
 function todos(state = [], action) {
 	switch (action.type) {
@@ -129,18 +111,24 @@ function goals(state = [], action) {
 			return state;
 	}
 }
-/*
-// root reducer
-function app(state = {}, action) {
-	return {
-		todos: todos(state.todos, action),
-		goals: goals(state.goals, action),
-	};
-}
 
-const store = createStore(app);
+/* // Commenting this due to additon of Redux.applyMiddleware
+							const checkAndDispatch = (store, action) => {
+								if (
+									action.type === ADD_TODO &&
+									action.todo.name.toLowerCase().includes("bitcoin")
+								) {
+									return alert("Nope!!. Bad idea");
+								}
+								if (
+									action.type === ADD_GOAL &&
+									action.goal.name.toLowerCase().includes("bitcoin")
+								) {
+									return alert("Nope!!. Bad idea");
+								}
+								return store.dispatch(action);
+							};
 */
-
 const checker = (store) => (next) => (action) => {
 	if (
 		action.type === ADD_TODO &&
@@ -167,6 +155,17 @@ const logger = (store) => (next) => (action) => {
 	console.groupEnd();
 	return result;
 };
+/*
+		// root reducer Replaced by Redux.combineReducers
+		function app(state = {}, action) {
+			return {
+				todos: todos(state.todos, action),
+				goals: goals(state.goals, action),
+			};
+		}
+		
+		const store = createStore(app);
+*/
 
 const store = Redux.createStore(
 	Redux.combineReducers({
@@ -179,6 +178,7 @@ const store = Redux.createStore(
 const generateId = () =>
 	Math.random().toString(36).substring(2) + new Date().getTime().toString(36);
 
+/*
 const createDeleteBtn = (click) => {
 	const removeBtn = document.createElement("button");
 	removeBtn.innerHTML = "X";
@@ -247,19 +247,29 @@ store.subscribe(() => {
 
 document.getElementById("todoBtn").addEventListener("click", addTodo);
 document.getElementById("goalBtn").addEventListener("click", addGoal);
-
+*/
 const List = (props) => {
 	return (
 		<ul>
 			{props.items.map((item) => (
 				<li key={item.id}>
-					<span>{item.name}</span>
+					<span
+						onClick={() => props.toggle && props.toggle(item.id)}
+						style={{
+							textDecoration: item.complete
+								? "line-through"
+								: "none",
+						}}
+					>
+						{item.name}
+					</span>
 					<button onClick={() => props.remove(item)}>X</button>
 				</li>
 			))}
 		</ul>
 	);
 };
+
 class Todo extends React.Component {
 	addItem = (event) => {
 		event.preventDefault();
@@ -278,6 +288,10 @@ class Todo extends React.Component {
 		this.props.store.dispatch(removeTodoAction(todo.id));
 	};
 
+	toggleItem = (id) => {
+		this.props.store.dispatch(toggleTodoAction(id));
+	};
+
 	render() {
 		return (
 			<div>
@@ -288,7 +302,11 @@ class Todo extends React.Component {
 					ref={(input) => (this.input = input)}
 				></input>
 				<button onClick={this.addItem}>Add Todo</button>
-				<List items={this.props.todos} remove={this.removeItem} />
+				<List
+					items={this.props.todos}
+					remove={this.removeItem}
+					toggle={this.toggleItem}
+				/>
 			</div>
 		);
 	}
@@ -336,7 +354,6 @@ class App extends React.Component {
 	}
 
 	render() {
-		console.log(this.props);
 		const { store } = this.props;
 		const { todos, goals } = store.getState();
 		return (
