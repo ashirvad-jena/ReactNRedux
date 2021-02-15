@@ -1,3 +1,5 @@
+// import React, { Component } from "react";
+
 /* Added Redux library so commenting this out
 // Library Code
 function createStore(reducer) {
@@ -245,3 +247,104 @@ store.subscribe(() => {
 
 document.getElementById("todoBtn").addEventListener("click", addTodo);
 document.getElementById("goalBtn").addEventListener("click", addGoal);
+
+const List = (props) => {
+	return (
+		<ul>
+			{props.items.map((item) => (
+				<li key={item.id}>
+					<span>{item.name}</span>
+					<button onClick={() => props.remove(item)}>X</button>
+				</li>
+			))}
+		</ul>
+	);
+};
+class Todo extends React.Component {
+	addItem = (event) => {
+		event.preventDefault();
+		const name = this.input.value;
+		this.input.value = "";
+		this.props.store.dispatch(
+			addTodoAction({
+				id: generateId(),
+				complete: false,
+				name,
+			})
+		);
+	};
+
+	removeItem = (todo) => {
+		this.props.store.dispatch(removeTodoAction(todo.id));
+	};
+
+	render() {
+		return (
+			<div>
+				<h1>Todo List</h1>
+				<input
+					type="text"
+					placeholder="Add Todo"
+					ref={(input) => (this.input = input)}
+				></input>
+				<button onClick={this.addItem}>Add Todo</button>
+				<List items={this.props.todos} remove={this.removeItem} />
+			</div>
+		);
+	}
+}
+
+class Goal extends React.Component {
+	addGoal = (event) => {
+		event.preventDefault();
+		const name = this.input.value;
+		this.input.value = "";
+		this.props.store.dispatch(
+			addGoalAction({
+				id: generateId(),
+				name,
+			})
+		);
+	};
+
+	removeItem = (goal) => {
+		this.props.store.dispatch(removeGoalAction(goal.id));
+	};
+
+	render() {
+		return (
+			<div>
+				<h1>Goals</h1>
+				<input
+					type="text"
+					placeholder="Add Goals"
+					ref={(input) => (this.input = input)}
+				></input>
+				<button onClick={this.addGoal}>Add Goal</button>
+				<List items={this.props.goals} remove={this.removeItem} />
+			</div>
+		);
+	}
+}
+
+class App extends React.Component {
+	componentDidMount() {
+		const { store } = this.props;
+		store.subscribe(() => {
+			this.forceUpdate();
+		});
+	}
+
+	render() {
+		console.log(this.props);
+		const { store } = this.props;
+		const { todos, goals } = store.getState();
+		return (
+			<div>
+				<Todo todos={todos} store={store} />
+				<Goal goals={goals} store={store} />
+			</div>
+		);
+	}
+}
+ReactDOM.render(<App store={store} />, document.getElementById("app"));

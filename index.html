@@ -26,48 +26,6 @@
 		<hr />
 		<div id="app"></div>
 
-		<script src="index.js"></script>
-		<script type="text/babel">
-			const List = (props) => {
-				return (
-					<ul>
-						<li>LIST</li>
-					</ul>
-				);
-			};
-			class Todo extends React.Component {
-				render() {
-					return (
-						<div>
-							Todo
-							<List />
-						</div>
-					);
-				}
-			}
-
-			class Goal extends React.Component {
-				render() {
-					return (
-						<div>
-							Goal
-							<List />
-						</div>
-					);
-				}
-			}
-
-			class App extends React.Component {
-				render() {
-					return (
-						<div>
-							<Todo />
-							<Goal />
-						</div>
-					);
-				}
-			}
-			ReactDOM.render(<App />, document.getElementById("app"));
-		</script>
+		<script src="index.js" type="text/babel"></script>
 	</body>
 </html>
