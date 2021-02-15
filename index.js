@@ -76,7 +76,7 @@ const removeGoalAction = (id) => {
 	};
 };
 
-/* // Commenting this dur to additon of Redux.applyMiddleware
+/* // Commenting this due to additon of Redux.applyMiddleware
 const checkAndDispatch = (store, action) => {
 	if (
 		action.type === ADD_TODO &&
