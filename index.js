@@ -299,15 +299,14 @@ const List = (props) => {
 class Todo extends React.Component {
 	addItem = (event) => {
 		event.preventDefault();
-		const name = this.input.value;
-		this.input.value = "";
-		this.props.store.dispatch(
-			addTodoAction({
-				id: generateId(),
-				complete: false,
-				name,
+		return API.saveTodo(this.input.value)
+			.then((todo) => {
+				this.props.store.dispatch(addTodoAction(todo));
+				this.input.value = "";
 			})
-		);
+			.catch(() => {
+				alert("Something went wrong. Please try later. :(");
+			});
 	};
 
 	removeItem = (todo) => {
@@ -320,6 +319,10 @@ class Todo extends React.Component {
 
 	toggleItem = (id) => {
 		this.props.store.dispatch(toggleTodoAction(id));
+		return API.saveTodoToggle(id).catch(() => {
+			this.props.store.dispatch(toggleTodoAction(id));
+			alert("Something went wrong. Please try later. :(");
+		});
 	};
 
 	render() {
@@ -345,14 +348,14 @@ class Todo extends React.Component {
 class Goal extends React.Component {
 	addGoal = (event) => {
 		event.preventDefault();
-		const name = this.input.value;
-		this.input.value = "";
-		this.props.store.dispatch(
-			addGoalAction({
-				id: generateId(),
-				name,
+		return API.saveGoal(this.input.value)
+			.then((goal) => {
+				this.props.store.dispatch(addGoalAction(goal));
+				this.input.value = "";
 			})
-		);
+			.catch(() => {
+				alert("Something went wrong. Please try later. :(");
+			});
 	};
 
 	removeItem = (goal) => {
