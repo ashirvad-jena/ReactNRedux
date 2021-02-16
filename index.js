@@ -88,7 +88,7 @@ const receiveItems = (todos, goals) => {
 };
 
 // Reducers
-function todos(state = [], action) {
+const todos = (state = [], action) => {
 	switch (action.type) {
 		case ADD_TODO:
 			return state.concat([action.todo]);
@@ -109,9 +109,9 @@ function todos(state = [], action) {
 		default:
 			return state;
 	}
-}
+};
 
-function goals(state = [], action) {
+const goals = (state = [], action) => {
 	switch (action.type) {
 		case ADD_GOAL:
 			return state.concat([action.goal]);
@@ -125,7 +125,16 @@ function goals(state = [], action) {
 		default:
 			return state;
 	}
-}
+};
+
+const loading = (state = true, action) => {
+	switch (action.type) {
+		case RECEIVE_ITEMS:
+			return false;
+		default:
+			return state;
+	}
+};
 
 /* // Commenting this due to additon of Redux.applyMiddleware
 							const checkAndDispatch = (store, action) => {
@@ -144,6 +153,7 @@ function goals(state = [], action) {
 								return store.dispatch(action);
 							};
 */
+// Middlewares
 const checker = (store) => (next) => (action) => {
 	if (
 		action.type === ADD_TODO &&
@@ -186,6 +196,7 @@ const store = Redux.createStore(
 	Redux.combineReducers({
 		todos,
 		goals,
+		loading,
 	}),
 	Redux.applyMiddleware(checker, logger)
 );
@@ -301,6 +312,10 @@ class Todo extends React.Component {
 
 	removeItem = (todo) => {
 		this.props.store.dispatch(removeTodoAction(todo.id));
+		return API.deleteTodo(todo.id).catch(() => {
+			this.props.store.dispatch(addTodoAction(todo));
+			alert("Something went wrong. Please try later. :(");
+		});
 	};
 
 	toggleItem = (id) => {
@@ -342,6 +357,10 @@ class Goal extends React.Component {
 
 	removeItem = (goal) => {
 		this.props.store.dispatch(removeGoalAction(goal.id));
+		return API.deleteGoal(goal.id).catch(() => {
+			this.props.store.dispatch(addGoalAction(goal));
+			alert("Something went wrong. Please try later. :(");
+		});
 	};
 
 	render() {
@@ -368,8 +387,6 @@ class App extends React.Component {
 		});
 		Promise.all([API.fetchTodos(), API.fetchGoals()]).then(
 			([todos, goals]) => {
-				console.log(todos);
-				console.log(goals);
 				store.dispatch(receiveItems(todos, goals));
 			}
 		);
@@ -377,7 +394,10 @@ class App extends React.Component {
 
 	render() {
 		const { store } = this.props;
-		const { todos, goals } = store.getState();
+		const { todos, goals, loading } = store.getState();
+		if (loading) {
+			return <h3>Loading...</h3>;
+		}
 		return (
 			<div>
 				<Todo todos={todos} store={store} />
