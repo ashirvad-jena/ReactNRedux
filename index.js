@@ -41,6 +41,7 @@ const REMOVE_TODO = "REMOVE_TODO";
 const TOGGLE_TODO = "TOGGLE_TODO";
 const ADD_GOAL = "ADD_GOAL";
 const REMOVE_GOAL = "REMOVE_GOAL";
+const RECEIVE_ITEMS = "RECEIVE_ITEMS";
 
 // Action creators
 const addTodoAction = (todo) => {
@@ -78,6 +79,14 @@ const removeGoalAction = (id) => {
 	};
 };
 
+const receiveItems = (todos, goals) => {
+	return {
+		type: RECEIVE_ITEMS,
+		todos,
+		goals,
+	};
+};
+
 // Reducers
 function todos(state = [], action) {
 	switch (action.type) {
@@ -94,6 +103,9 @@ function todos(state = [], action) {
 					: Object.assign({}, todo, { complete: !todo.complete })
 			);
 
+		case RECEIVE_ITEMS:
+			return action.todos;
+
 		default:
 			return state;
 	}
@@ -106,6 +118,9 @@ function goals(state = [], action) {
 
 		case REMOVE_GOAL:
 			return state.filter((goal) => goal.id !== action.id);
+
+		case RECEIVE_ITEMS:
+			return action.goals;
 
 		default:
 			return state;
@@ -351,6 +366,13 @@ class App extends React.Component {
 		store.subscribe(() => {
 			this.forceUpdate();
 		});
+		Promise.all([API.fetchTodos(), API.fetchGoals()]).then(
+			([todos, goals]) => {
+				console.log(todos);
+				console.log(goals);
+				store.dispatch(receiveItems(todos, goals));
+			}
+		);
 	}
 
 	render() {
