@@ -463,15 +463,17 @@ class Goal extends React.Component {
 	}
 }
 
-// class ConnectedApp extends React.Component {
-// 	render() {
-// 		return (
-// 			<Context.Consumer>
-// 				{(store) => <App store={store} />}
-// 			</Context.Consumer>
-// 		);
-// 	}
-// }
+/*
+class ConnectedApp extends React.Component {
+	render() {
+		return (
+			<Context.Consumer>
+				{(store) => <App store={store} />}
+			</Context.Consumer>
+		);
+	}
+}
+*/
 
 class App extends React.Component {
 	componentDidMount() {
