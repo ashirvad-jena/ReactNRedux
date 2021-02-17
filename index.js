@@ -87,6 +87,62 @@ const receiveItems = (todos, goals) => {
 	};
 };
 
+const handleAddTodo = (name, reset) => {
+	return (dispatch) => {
+		return API.saveTodo(name)
+			.then((todo) => {
+				dispatch(addTodoAction(todo));
+				reset();
+			})
+			.catch(() => {
+				alert("Something went wrong. Please try later. :(");
+			});
+	};
+};
+
+const handleToggleItem = (id) => {
+	return (dispatch) => {
+		dispatch(toggleTodoAction(id));
+		return API.saveTodoToggle(id).catch(() => {
+			dispatch(toggleTodoAction(id));
+			alert("Something went wrong. Please try later. :(");
+		});
+	};
+};
+
+const handleDeleteTodo = (todo) => {
+	return (dispatch) => {
+		dispatch(removeTodoAction(todo.id));
+		return API.deleteTodo(todo.id).catch(() => {
+			dispatch(addTodoAction(todo));
+			alert("Something went wrong. Please try later. :(");
+		});
+	};
+};
+
+const handleAddGoal = (input, reset) => {
+	return (dispatch) => {
+		return API.saveGoal(input)
+			.then((goal) => {
+				dispatch(addGoalAction(goal));
+				reset();
+			})
+			.catch(() => {
+				alert("Something went wrong. Please try later. :(");
+			});
+	};
+};
+
+const handleRemoveGoal = (goal) => {
+	return (dispatch) => {
+		dispatch(removeGoalAction(goal.id));
+		return API.deleteGoal(goal.id).catch(() => {
+			dispatch(addGoalAction(goal));
+			alert("Something went wrong. Please try later. :(");
+		});
+	};
+};
+
 // Reducers
 const todos = (state = [], action) => {
 	switch (action.type) {
@@ -192,13 +248,22 @@ const logger = (store) => (next) => (action) => {
 		const store = createStore(app);
 */
 
+/* Replaced by ReduxThunk.default middleware
+const thunk = (store) => (next) => (action) => {
+	if (typeof action === "function") {
+		action(store.dispatch);
+	}
+	return next(action);
+};
+*/
+
 const store = Redux.createStore(
 	Redux.combineReducers({
 		todos,
 		goals,
 		loading,
 	}),
-	Redux.applyMiddleware(checker, logger)
+	Redux.applyMiddleware(ReduxThunk.default, checker, logger)
 );
 
 const generateId = () =>
@@ -299,30 +364,17 @@ const List = (props) => {
 class Todo extends React.Component {
 	addItem = (event) => {
 		event.preventDefault();
-		return API.saveTodo(this.input.value)
-			.then((todo) => {
-				this.props.store.dispatch(addTodoAction(todo));
-				this.input.value = "";
-			})
-			.catch(() => {
-				alert("Something went wrong. Please try later. :(");
-			});
+		this.props.store.dispatch(
+			handleAddTodo(this.input.value, () => (this.input.value = ""))
+		);
 	};
 
 	removeItem = (todo) => {
-		this.props.store.dispatch(removeTodoAction(todo.id));
-		return API.deleteTodo(todo.id).catch(() => {
-			this.props.store.dispatch(addTodoAction(todo));
-			alert("Something went wrong. Please try later. :(");
-		});
+		this.props.store.dispatch(handleDeleteTodo(todo));
 	};
 
 	toggleItem = (id) => {
-		this.props.store.dispatch(toggleTodoAction(id));
-		return API.saveTodoToggle(id).catch(() => {
-			this.props.store.dispatch(toggleTodoAction(id));
-			alert("Something went wrong. Please try later. :(");
-		});
+		this.props.store.dispatch(handleToggleItem(id));
 	};
 
 	render() {
@@ -348,22 +400,13 @@ class Todo extends React.Component {
 class Goal extends React.Component {
 	addGoal = (event) => {
 		event.preventDefault();
-		return API.saveGoal(this.input.value)
-			.then((goal) => {
-				this.props.store.dispatch(addGoalAction(goal));
-				this.input.value = "";
-			})
-			.catch(() => {
-				alert("Something went wrong. Please try later. :(");
-			});
+		this.props.store.dispatch(
+			handleAddGoal(this.input.value, () => (this.input.value = ""))
+		);
 	};
 
 	removeItem = (goal) => {
-		this.props.store.dispatch(removeGoalAction(goal.id));
-		return API.deleteGoal(goal.id).catch(() => {
-			this.props.store.dispatch(addGoalAction(goal));
-			alert("Something went wrong. Please try later. :(");
-		});
+		this.props.store.dispatch(handleRemoveGoal(goal));
 	};
 
 	render() {
