@@ -493,19 +493,21 @@ class App extends React.Component {
 	}
 }
 
-const ConnectedApp = connect((state) => ({
+const ConnectedApp = ReactRedux.connect((state) => ({
 	loading: state.loading,
 }))(App);
 
-const ConnectedTodo = connect((state) => ({
+const ConnectedTodo = ReactRedux.connect((state) => ({
 	todos: state.todos,
 }))(Todo);
 
-const ConnectedGoal = connect((state) => ({
+const ConnectedGoal = ReactRedux.connect((state) => ({
 	goals: state.goals,
 }))(Goal);
 
-const Context = React.createContext();
+//Replaced bu ReactRedux library
+/*
+ const Context = React.createContext();
 
 function connect(mapStateToProps) {
 	return (Component) => {
@@ -550,10 +552,11 @@ class Provider extends React.Component {
 		);
 	}
 }
+*/
 
 ReactDOM.render(
-	<Provider store={store}>
+	<ReactRedux.Provider store={store}>
 		<ConnectedApp />
-	</Provider>,
+	</ReactRedux.Provider>,
 	document.getElementById("app")
 );
