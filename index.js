@@ -371,6 +371,7 @@ const List = (props) => {
 	);
 };
 
+/* // Replaced by ConnectedTodo function
 class ConnectedTodo extends React.Component {
 	render() {
 		return (
@@ -384,6 +385,11 @@ class ConnectedTodo extends React.Component {
 		);
 	}
 }
+*/
+
+const ConnectedTodo = connect((state) => ({
+	todos: state.todos,
+}))(Todo);
 
 class Todo extends React.Component {
 	addItem = (event) => {
@@ -421,6 +427,7 @@ class Todo extends React.Component {
 	}
 }
 
+/* // Replaced by ConnectedGoal function
 class ConnectedGoal extends React.Component {
 	render() {
 		return (
@@ -433,6 +440,11 @@ class ConnectedGoal extends React.Component {
 		);
 	}
 }
+*/
+
+const ConnectedGoal = connect((state) => ({
+	goals: state.goals,
+}))(Goal);
 
 class Goal extends React.Component {
 	addGoal = (event) => {
@@ -463,6 +475,7 @@ class Goal extends React.Component {
 	}
 }
 
+/* // Replaced by ConnectedApp function
 class ConnectedApp extends React.Component {
 	render() {
 		return (
@@ -472,21 +485,20 @@ class ConnectedApp extends React.Component {
 		);
 	}
 }
+*/
+
+const ConnectedApp = connect((state) => ({
+	loading: state.loading,
+}))(App);
 
 class App extends React.Component {
 	componentDidMount() {
-		const { store } = this.props;
-
-		store.dispatch(handleInitialData());
-
-		store.subscribe(() => {
-			this.forceUpdate();
-		});
+		const { dispatch } = this.props;
+		dispatch(handleInitialData());
 	}
 
 	render() {
-		const { loading } = store.getState();
-		if (loading) {
+		if (this.props.loading) {
 			return <h3>Loading...</h3>;
 		}
 		return (
