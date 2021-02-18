@@ -17,7 +17,7 @@ const removeGoal = (id) => {
 	};
 };
 
-export const handleAddGoal = (input, reset) => {
+export function handleAddGoal(input, reset) {
 	return (dispatch) => {
 		return API.saveGoal(input)
 			.then((goal) => {
@@ -28,9 +28,9 @@ export const handleAddGoal = (input, reset) => {
 				alert("Something went wrong. Please try later. :(");
 			});
 	};
-};
+}
 
-export const handleRemoveGoal = (goal) => {
+export function handleRemoveGoal(goal) {
 	return (dispatch) => {
 		dispatch(removeGoal(goal.id));
 		return API.deleteGoal(goal.id).catch(() => {
@@ -38,4 +38,4 @@ export const handleRemoveGoal = (goal) => {
 			alert("Something went wrong. Please try later. :(");
 		});
 	};
-};
+}

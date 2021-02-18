@@ -25,7 +25,7 @@ const toggleTodo = (id) => {
 	};
 };
 
-export const handleAddTodo = (name, reset) => {
+export function handleAddTodo(name, reset) {
 	return (dispatch) => {
 		return API.saveTodo(name)
 			.then((todo) => {
@@ -36,24 +36,24 @@ export const handleAddTodo = (name, reset) => {
 				alert("Something went wrong. Please try later. :(");
 			});
 	};
-};
+}
 
-export const handleToggleItem = (id) => {
+export function handleToggle(id) {
 	return (dispatch) => {
-		dispatch(toggleTodoAction(id));
+		dispatch(toggleTodo(id));
 		return API.saveTodoToggle(id).catch(() => {
 			dispatch(toggleTodo(id));
 			alert("Something went wrong. Please try later. :(");
 		});
 	};
-};
+}
 
-export const handleDeleteTodo = (todo) => {
+export function handleDeleteTodo(todo) {
 	return (dispatch) => {
-		dispatch(removeTodoAction(todo.id));
+		dispatch(removeTodo(todo.id));
 		return API.deleteTodo(todo.id).catch(() => {
 			dispatch(addTodo(todo));
 			alert("Something went wrong. Please try later. :(");
 		});
 	};
-};
+}
